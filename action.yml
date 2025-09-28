@@ -151,7 +151,7 @@ runs:
       run: |
         # DNSControl check
         set +e
-        DNSCONTROL_CMD=$(dnscontrol check --config "$DNSCONFIG_FILE" 2>&1)
+        DNSCONTROL_CMD=$($DNSCONTROL check --config "$DNSCONFIG_FILE" 2>&1)
         err=$?
         export DNSCONTROL_CMD
         DELIMITER="DNSCONTROL-$RANDOM"
@@ -210,7 +210,7 @@ runs:
       run: |
         # DNSControl
         set +e
-        DNSCONTROL_CMD=$(dnscontrol $DNSCONTROL_COMMAND --config "$DNSCONFIG_FILE" $CREDS_ARG 2>&1)
+        DNSCONTROL_CMD=$($DNSCONTROL $DNSCONTROL_COMMAND --config "$DNSCONFIG_FILE" $CREDS_ARG 2>&1)
         err=$?
         DELIMITER="DNSCONTROL-$RANDOM"
         {
