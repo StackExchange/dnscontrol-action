@@ -167,9 +167,13 @@ runs:
       shell: bash
       run: |
         # Resolve download URL for latest
+        LATEST=$($CURL -L https://api.github.com/repos/StackExchange/dnscontrol/releases/latest)
+        VERSION=$(printf '%s' $LATEST | jq -r ".tag_name")
+
+        PACKAGE=dnscontrol_${VERSION#v}_${OS}_${ARCH}.${EXT}
         URL=$(\
-          $CURL -L https://api.github.com/repos/StackExchange/dnscontrol/releases/latest \
-          | jq -r ".assets[] | select(.name? | match(\"dnscontrol_*.*.*_$OS_$ARCH.$EXT$\")) | .browser_download_url"\
+          printf '%s' $LATEST \
+          | jq -r --arg package $PACKAGE '.assets[] | select(.name == "\($package)") | .browser_download_url'\
         )
         echo "resolved package url: $URL"
         echo "URL=$URL" >>"$GITHUB_ENV"
@@ -179,9 +183,11 @@ runs:
       shell: bash
       run: |
         # Resolve download URL
+        PACKAGE=dnscontrol_${DNSCONTROL_VERSION#v}_${OS}_${ARCH}.${EXT}
         URL=$(\
           $CURL -L https://api.github.com/repos/StackExchange/dnscontrol/releases \
-          | jq -r ".[] | select(.tag_name == \"$DNSCONTROL_VERSION\") | .assets[] | select(.name? | match(\"dnscontrol_*.*.*_$OS_$ARCH.$EXT$\")) | .browser_download_url" \
+          | jq -r --arg version $DNSCONTROL_VERSION --arg package $PACKAGE \
+            '.[] | select(.tag_name == "\($version)") | .assets[] | select(.name == "\($package)") | .browser_download_url' \
         )
         echo "resolved package url: $URL"
         echo "URL=$URL" >>"$GITHUB_ENV"
