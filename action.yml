@@ -139,6 +139,7 @@ runs:
         mkdir -p "$RESOLVED_TEMP"
         $CURL -L "${URL}" | tar -C "$RESOLVED_TEMP" -xvzf - dnscontrol
         echo "$RESOLVED_TEMP" >>"$GITHUB_PATH"
+        echo "DNSCONTROL=$RESOLVED_TEMP/dnscontrol" >>"$GITHUB_ENV"
         $RESOLVED_TEMP/dnscontrol version
 
     - name: DNSControl check
