@@ -135,11 +135,12 @@ runs:
         TEMP: ${{ runner.temp }}
       run: |
         # Download DNSControl
-        $CURL -L "${URL}" \
-          | tar -C "$TEMP" -xvzf - dnscontrol
-        DNSCONTROL=$(readlink -f "$TEMP/dnscontrol")
-        echo "DNSCONTROL=$DNSCONTROL" >>"$GITHUB_ENV"
-        $DNSCONTROL version
+        RESOLVED_TEMP="$(readlink -e $TEMP)/dnscontrol$RANDOM"
+        mkdir -p "$RESOLVED_TEMP"
+        $CURL -L "${URL}" | tar -C "$RESOLVED_TEMP" -xvzf - dnscontrol
+        echo "$RESOLVED_TEMP" >>"$GITHUB_PATH"
+        echo "DNSCONTROL=$RESOLVED_TEMP/dnscontrol" >>"$GITHUB_ENV"
+        $RESOLVED_TEMP/dnscontrol version
 
     - name: DNSControl check
       if: ${{ inputs.check == 'true' }}
