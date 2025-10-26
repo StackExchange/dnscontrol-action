@@ -93,7 +93,9 @@ runs:
 
         # set default curl args
         CURL='curl -H user-agent:stackexchange-dnscontrol-action -fsS --retry 5 --retry-max-time 30'
+        CURLJSON="$CURL -H Accept:application/vnd.github.v3+json "
         echo "CURL=$CURL" >>"$GITHUB_ENV"
+        echo "CURLJSON=$CURLJSON" >>"$GITHUB_ENV"
 
         # selectively append `--creds` to commands that need it
         read -ra ARGS_SPLIT <<< "$CMDARGS"
@@ -113,7 +115,7 @@ runs:
       run: |
         # Resolve download URL for latest
         URL=$(\
-          $CURL -L https://api.github.com/repos/StackExchange/dnscontrol/releases/latest \
+          $CURLJSON -L https://api.github.com/repos/StackExchange/dnscontrol/releases/latest \
           | jq -r '.assets[] | select(.name? | match("dnscontrol_*.*.*_linux_amd64.tar.gz$")) | .browser_download_url'\
         )
         echo "URL=$URL" >>"$GITHUB_ENV"
@@ -124,7 +126,7 @@ runs:
       run: |
         # Resolve download URL
         URL=$(\
-          $CURL -L https://api.github.com/repos/StackExchange/dnscontrol/releases \
+          $CURLJSON -L https://api.github.com/repos/StackExchange/dnscontrol/releases \
           | jq -r ".[] | select(.tag_name == \"$DNSCONTROL_VERSION\") | .assets[] | select(.name? | match(\"dnscontrol_*.*.*_linux_amd64.tar.gz$\")) | .browser_download_url" \
         )
         echo "URL=$URL" >>"$GITHUB_ENV"
