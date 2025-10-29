@@ -32,7 +32,8 @@ jobs:
     runs-on: ubuntu-latest
     if: ${{ !cancelled() }}
     steps:
-      - name: Checkout repo
+      -
+        name: Checkout repo
         uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # v4.3.0
 
       #
@@ -46,7 +47,8 @@ jobs:
       # i.e. https://github.com/YOUR_ORG/REPO_NAME/settings/secrets/actions
       #
 
-      - # Extract the secret and write it to the file.
+      # Extract the secret and write it to the file.
+      -
         name: Prepare creds_file
         run: printf '%s' '${{secrets.CREDS_JSON}}' > creds.json
 
@@ -95,7 +97,8 @@ jobs:
       # Step 2: In this file, update the "env:" section (above) to extract the
       # secrets mentioned in your creds.json file.
 
-      - name: call dnscontrol action
+      -
+        name: call dnscontrol action
         uses: StackExchange/dnscontrol-action@f227f6014445e9a45ca0e75d80296a4c7f796884
         with:
           cmdargs: push
