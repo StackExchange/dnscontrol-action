@@ -76,6 +76,7 @@ on:
     paths:
       - '*dnsconfig.js'
       - '*creds.json'
+# FYI: The "on" statement for poush/merge is very different. See example.
 
 permissions:
   contents: read

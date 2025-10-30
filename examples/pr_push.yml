@@ -9,11 +9,12 @@ name: DNSControl-Merge
 # This workflow applies to any PR that modifies dnsconfig.js or creds.json
 #
 on:
-    pull_request:
-      types: [ closed ]
-      paths:
-        - '*dnsconfig.js'
-        - '*creds.json'
+  push:
+    branches: [main]
+    paths:
+      - "*dnsconfig.js"
+      - "*creds.json"
+# Add or remove paths as needed.
 
 permissions:
   contents: read
@@ -25,7 +26,7 @@ permissions:
 #    MYCF_ACCOUNTID: "${{ secrets.MYCF_ACCOUNTID }}"
 #    MYCF_TOKEN: "${{ secrets.MYCF_TOKEN }}"
 #
-  
+
 jobs:
   push:
     runs-on: ubuntu-latest
@@ -34,68 +35,69 @@ jobs:
       -
         name: Checkout repo
         uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # v4.3.0
+        with:
+          persist-credentials: false
 
-#
-# Method 1: creds.json stored as a secret
-#
-# This code will read the gihub secret named CREDS_JSON and stuff it into the
-# file creds.json.
-#
-# Step 1: Store the entire creds.json file as a github secret named CREDS_JSON.
-# Settings -> Secrets and variables -> Actions
-# i.e. https://github.com/YOUR_ORG/REPO_NAME/settings/secrets/actions
-#
+      #
+      # Method 1: creds.json stored as a secret
+      #
+      # This code will read the gihub secret named CREDS_JSON and stuff it into the
+      # file creds.json.
+      #
+      # Step 1: Store the entire creds.json file as a github secret named CREDS_JSON.
+      # Settings -> Secrets and variables -> Actions
+      # i.e. https://github.com/YOUR_ORG/REPO_NAME/settings/secrets/actions
+      #
 
+      # Extract the secret and write it to the file.
       -
-        # Extract the secret and write it to the file.
         name: Prepare creds_file
         run: printf '%s' '${{secrets.CREDS_JSON}}' > creds.json
 
-#
-# Method 2: Dynamic creds.json file
-#
-# Store the individual credentials as github secrets, and dynamically generate
-# the creds.json file that uses them.
-#
-# Step 1: Store each secret in Settings -> Secrets and variables -> Actions
-# Settings -> Secrets and variables -> Actions
-# i.e. https://github.com/YOUR_ORG/REPO_NAME/settings/secrets/actions
-#
-# Step 2: Uncomment and modify the code below to create the creds.json file you
-# desire.
-#
-#      -
-#        name: Prepare creds_file
-#        run: |
-#          cat >creds.json<<EOF
-#          {
-#            "route53": {
-#              "TYPE": "ROUTE53",
-#              "KeyId": "${{ secrets.DNSCONTROL_ROUTE53_KEY_ID }}",
-#              "SecretKey": "${{ secrets.DNSCONTROL_ROUTE53_KEY }}"
-#            }
-#          }
-#          EOF
+      #
+      # Method 2: Dynamic creds.json file
+      #
+      # Store the individual credentials as github secrets, and dynamically generate
+      # the creds.json file that uses them.
+      #
+      # Step 1: Store each secret in Settings -> Secrets and variables -> Actions
+      # Settings -> Secrets and variables -> Actions
+      # i.e. https://github.com/YOUR_ORG/REPO_NAME/settings/secrets/actions
+      #
+      # Step 2: Uncomment and modify the code below to create the creds.json file you
+      # desire.
+      #
+      #      -
+      #        name: Prepare creds_file
+      #        run: |
+      #          cat >creds.json<<EOF
+      #          {
+      #            "route53": {
+      #              "TYPE": "ROUTE53",
+      #              "KeyId": "${{ secrets.DNSCONTROL_ROUTE53_KEY_ID }}",
+      #              "SecretKey": "${{ secrets.DNSCONTROL_ROUTE53_KEY }}"
+      #            }
+      #          }
+      #          EOF
 
-#
-# Method 3: Static creds.json file
-#
-# Use a static creds.json file that references env variables for any secret.
-#
-# Step 1: Commit to your git repo a creds.json file that specifies env
-# variables instead of the actual secrets.  NEVER COMMIT SECRETS IN A GIT REPO.
-#
-# Your creds.json file will look like this:
-#
-#  "my_cloudflare_account": {
-#    "TYPE": "CLOUDFLAREAPI",
-#    "accountid": "$MYCF_ACCOUNTID",
-#    "apitoken": "$MYCF_TOKEN",
-#  },
-#
-# Step 2: In this file, update the "env:" section (above) to extract the
-# secrets mentioned in your creds.json file.
-
+      #
+      # Method 3: Static creds.json file
+      #
+      # Use a static creds.json file that references env variables for any secret.
+      #
+      # Step 1: Commit to your git repo a creds.json file that specifies env
+      # variables instead of the actual secrets.  NEVER COMMIT SECRETS IN A GIT REPO.
+      #
+      # Your creds.json file will look like this:
+      #
+      #  "my_cloudflare_account": {
+      #    "TYPE": "CLOUDFLAREAPI",
+      #    "accountid": "$MYCF_ACCOUNTID",
+      #    "apitoken": "$MYCF_TOKEN",
+      #  },
+      #
+      # Step 2: In this file, update the "env:" section (above) to extract the
+      # secrets mentioned in your creds.json file.
 
       -
         name: call dnscontrol action
@@ -106,4 +108,3 @@ jobs:
           post_summary: true
           check: false
           creds_file: creds.json
-
