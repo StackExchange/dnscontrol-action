@@ -1,8 +1,8 @@
 # dnscontrol-action
 
-The Official Github Action (GHA) for DNSControl
+The Official Github (GHA) and Forgejo Action for DNSControl
 
-This is a composite GitHub action for running configurable DNSControl commands.
+This is a composite GitHub and Forgejo action for running configurable DNSControl commands.
 
 [DNSControl](https://dnscontrol.org) is an [opinionated](https://docs.dnscontrol.org/developer-info/opinions) platform for seamlessly managing your DNS configuration across any number of DNS hosts, both in the cloud or in your own infrastructure.
 
